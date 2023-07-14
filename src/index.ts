@@ -1,11 +1,5 @@
 import express, { Request, Response } from "express";
-import {
-  getAllUsers,
-  getAllProducts,
-  searchProductsByName,
-  createUser,
-  createProduct,
-} from "./database";
+import { getAllUsers, getAllProducts, searchProductsByName, createUser, createProduct, deleteUser, deleteProduct, editProduct } from "./database";
 
 const app = express();
 const port = 3000;
@@ -38,6 +32,25 @@ app.post("/products", (req: Request, res: Response) => {
   const { id, name, price, description, imageUrl } = req.body;
   const message = createProduct(id, name, price, description, imageUrl);
   res.status(201).send(message);
+});
+
+app.delete("/users/:id", (req: Request, res: Response) => {
+  const id = req.params.id;
+  const message = deleteUser(id);
+  res.status(200).send(message);
+});
+
+app.delete("/products/:id", (req: Request, res: Response) => {
+  const id = req.params.id;
+  const message = deleteProduct(id);
+  res.status(200).send(message);
+});
+
+app.put("/products/:id", (req: Request, res: Response) => {
+  const id = req.params.id;
+  const { name, price, description, imageUrl } = req.body;
+  const message = editProduct(id, name, price, description, imageUrl);
+  res.status(200).send(message);
 });
 
 app.listen(port, () => {

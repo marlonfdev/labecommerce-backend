@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchProductsByName = exports.getAllProducts = exports.createProduct = exports.getAllUsers = exports.createUser = exports.products = exports.users = void 0;
+exports.editProduct = exports.deleteProduct = exports.deleteUser = exports.searchProductsByName = exports.getAllProducts = exports.createProduct = exports.getAllUsers = exports.createUser = exports.products = exports.users = void 0;
 exports.users = [
     {
         id: "u001",
@@ -60,3 +60,37 @@ function searchProductsByName(name) {
     return matchingProducts;
 }
 exports.searchProductsByName = searchProductsByName;
+function deleteUser(id) {
+    const index = exports.users.findIndex((user) => user.id === id);
+    if (index !== -1) {
+        exports.users.splice(index, 1);
+        return "User apagado com sucesso";
+    }
+    return "Usuário não encontrado";
+}
+exports.deleteUser = deleteUser;
+function deleteProduct(id) {
+    const index = exports.products.findIndex((product) => product.id === id);
+    if (index !== -1) {
+        exports.products.splice(index, 1);
+        return "Produto apagado com sucesso";
+    }
+    return "Produto não encontrado";
+}
+exports.deleteProduct = deleteProduct;
+function editProduct(id, name, price, description, imageUrl) {
+    const product = exports.products.find((product) => product.id === id);
+    if (product) {
+        if (name)
+            product.name = name;
+        if (price)
+            product.price = price;
+        if (description)
+            product.description = description;
+        if (imageUrl)
+            product.imageUrl = imageUrl;
+        return "Produto atualizado com sucesso";
+    }
+    return "Produto não encontrado";
+}
+exports.editProduct = editProduct;

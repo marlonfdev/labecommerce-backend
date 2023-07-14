@@ -73,3 +73,35 @@ export function searchProductsByName(name: string): Product[] {
     );
     return matchingProducts;
   }
+
+  export function deleteUser(id: string): string {
+    const index = users.findIndex((user) => user.id === id);
+    if (index !== -1) {
+      users.splice(index, 1);
+      return "User apagado com sucesso";
+    }
+    return "Usuário não encontrado";
+  }
+
+  export function deleteProduct(id: string): string {
+    const index = products.findIndex((product) => product.id === id);
+    if (index !== -1) {
+      products.splice(index, 1);
+      return "Produto apagado com sucesso";
+    }
+    return "Produto não encontrado";
+  }
+
+  export function editProduct(id: string, name?: string, price?: number, description?: string, imageUrl?: string): string {
+    const product = products.find((product) => product.id === id);
+    if (product) {
+      if (name) product.name = name;
+      if (price) product.price = price;
+      if (description) product.description = description;
+      if (imageUrl) product.imageUrl = imageUrl;
+      return "Produto atualizado com sucesso";
+    }
+    return "Produto não encontrado";
+  }
+  
+  
