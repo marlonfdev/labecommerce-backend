@@ -50,3 +50,40 @@ SELECT purchases.id AS purchase_id, users.id AS buyer_id, users.name AS buyer_na
 FROM purchases
 JOIN users ON purchases.buyer = users.id
 WHERE purchases.id = 'id_da_compra';
+
+-- Criação da tabela de relações
+CREATE TABLE purchases_products (
+  purchase_id TEXT NOT NULL,
+  product_id TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  FOREIGN KEY (purchase_id) REFERENCES purchases (id),
+  FOREIGN KEY (product_id) REFERENCES products (id)
+);
+
+-- Inserção dos dados
+INSERT INTO purchases_products (purchase_id, product_id, quantity)
+VALUES
+  ('c001', 'p001', 5),
+  ('c001', 'p002', 3),
+  ('c002', 'p003', 2),
+  ('c002', 'p004', 4),
+  ('c003', 'p002', 1),
+  ('c003', 'p005', 2);
+
+-- Consulta com junção INNER JOIN
+SELECT pp.*, p.*, pr.*
+FROM purchases_products AS pp
+INNER JOIN purchases AS p ON pp.purchase_id = p.id
+INNER JOIN products AS pr ON pp.product_id = pr.id;
+
+-- Exemplo de tabela "orders" com chave estrangeira "customer_id"
+CREATE TABLE orders (
+  id INT PRIMARY KEY,
+  order_number INT,
+  customer_id INT,
+  -- outras colunas da tabela
+  FOREIGN KEY (customer_id)
+    REFERENCES customers(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
