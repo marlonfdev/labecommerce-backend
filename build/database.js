@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.products = exports.users = void 0;
+exports.searchProductsByName = exports.getAllProducts = exports.createProduct = exports.getAllUsers = exports.createUser = exports.products = exports.users = void 0;
 exports.users = [
     {
         id: "u001",
@@ -33,3 +33,30 @@ exports.products = [
         imageUrl: "https://picsum.photos/seed/Monitor/400",
     },
 ];
+function createUser(id, name, email, password) {
+    const createdAt = new Date().toISOString();
+    const newUser = { id, name, email, password, createdAt };
+    exports.users.push(newUser);
+    return "Cadastro realizado com sucesso";
+}
+exports.createUser = createUser;
+function getAllUsers() {
+    return exports.users;
+}
+exports.getAllUsers = getAllUsers;
+function createProduct(id, name, price, description, imageUrl) {
+    const newProduct = { id, name, price, description, imageUrl };
+    exports.products.push(newProduct);
+    return "Produto criado com sucesso";
+}
+exports.createProduct = createProduct;
+function getAllProducts() {
+    return exports.products;
+}
+exports.getAllProducts = getAllProducts;
+function searchProductsByName(name) {
+    const searchTerm = name.toLowerCase();
+    const matchingProducts = exports.products.filter((product) => product.name.toLowerCase().includes(searchTerm));
+    return matchingProducts;
+}
+exports.searchProductsByName = searchProductsByName;

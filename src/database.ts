@@ -33,3 +33,43 @@ export const products: Product[] = [
     imageUrl: "https://picsum.photos/seed/Monitor/400",
   },
 ];
+
+export function createUser(
+  id: string,
+  name: string,
+  email: string,
+  password: string
+): string {
+  const createdAt = new Date().toISOString();
+  const newUser: User = { id, name, email, password, createdAt };
+  users.push(newUser);
+  return "Cadastro realizado com sucesso";
+}
+
+export function getAllUsers(): User[] {
+  return users;
+}
+
+export function createProduct(
+  id: string,
+  name: string,
+  price: number,
+  description: string,
+  imageUrl: string
+): string {
+  const newProduct: Product = { id, name, price, description, imageUrl };
+  products.push(newProduct);
+  return "Produto criado com sucesso";
+}
+
+export function getAllProducts(): Product[] {
+  return products;
+}
+
+export function searchProductsByName(name: string): Product[] {
+    const searchTerm = name.toLowerCase();
+    const matchingProducts: Product[] = products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm)
+    );
+    return matchingProducts;
+  }
