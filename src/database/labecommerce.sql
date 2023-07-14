@@ -29,3 +29,24 @@ VALUES
   ('prod003', 'Teclado mecânico', 350, 'Teclado mecânico com iluminação RGB', 'https://picsum.photos/seed/Teclado%20mecanico/400'),
   ('prod004', 'Fone de ouvido', 150, 'Fone de ouvido com cancelamento de ruído', 'https://picsum.photos/seed/Fone%20de%20ouvido/400'),
   ('prod005', 'Notebook', 2000, 'Notebook com processador Intel Core i7 e SSD 512GB', 'https://picsum.photos/seed/Notebook/400');
+
+CREATE TABLE IF NOT EXISTS purchases (
+  id TEXT PRIMARY KEY,
+  buyer TEXT NOT NULL,
+  total_price REAL NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (buyer) REFERENCES users(id)
+);
+
+-- Exemplo de criação de pedido para a primeira pessoa cadastrada
+INSERT INTO purchases (id, buyer, total_price, created_at) 
+VALUES ('1', 'id_da_primeira_pessoa', 'valor_aleatorio', 'data_em_texto');
+
+-- Exemplo de criação de pedido para a segunda pessoa cadastrada
+INSERT INTO purchases (id, buyer, total_price, created_at) 
+VALUES ('2', 'id_da_segunda_pessoa', 'valor_aleatorio', 'data_em_texto');
+
+SELECT purchases.id AS purchase_id, users.id AS buyer_id, users.name AS buyer_name, users.email AS buyer_email, purchases.total_price, purchases.created_at
+FROM purchases
+JOIN users ON purchases.buyer = users.id
+WHERE purchases.id = 'id_da_compra';
