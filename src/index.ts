@@ -1,22 +1,45 @@
-import { createProduct, createUser, getAllProducts, getAllUsers, searchProductsByName } from "./database";
+import express, { Request, Response } from "express";
+import {
+  getAllUsers,
+  getAllProducts,
+  searchProductsByName,
+  createUser,
+  createProduct,
+} from "./database";
 
-console.log(createUser(
-    "u003", 
-    "Astrodev", 
-    "astrodev@email.com", 
-    "astrodev99"));
+const app = express();
+const port = 3000;
 
-console.log(getAllUsers());
+app.use(express.json());
 
-console.log(createProduct(
-        "prod003", 
-        "SSD gamer", 
-        349.99, 
-        "Acelere seu sistema com velocidades incríveis de leitura e gravação.",
-        "https://picsum.photos/seed/SSD%20gamer/400"
-    )
-  );
+app.get("/users", (req: Request, res: Response) => {
+  const users = getAllUsers();
+  res.status(200).json(users);
+});
 
-  console.log(getAllProducts());
+app.get("/products", (req: Request, res: Response) => {
+  const name = req.query.name as string;
+  if (name) {
+    const filteredProducts = searchProductsByName(name);
+    res.status(200).json(filteredProducts);
+  } else {
+    const products = getAllProducts();
+    res.status(200).json(products);
+  }
+});
 
-  console.log(searchProductsByName("gamer"));
+app.post("/users", (req: Request, res: Response) => {
+  const { id, name, email, password } = req.body;
+  const message = createUser(id, name, email, password);
+  res.status(201).send(message);
+});
+
+app.post("/products", (req: Request, res: Response) => {
+  const { id, name, price, description, imageUrl } = req.body;
+  const message = createProduct(id, name, price, description, imageUrl);
+  res.status(201).send(message);
+});
+
+app.listen(port, () => {
+  console.log(`Servidor está rodando em http://localhost:${port}`);
+});
