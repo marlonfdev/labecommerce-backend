@@ -1,263 +1,143 @@
 "use strict";
-// import express, { Request, Response } from "express";
-// import { getAllUsers, getAllProducts, searchProductsByName, createUser, createProduct, deleteUser, deleteProduct, editProduct } from "./database";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// const app = express();
-// const port = 3000;
-// app.use(express.json());
-// app.get("/users", (req: Request, res: Response) => {
-//   try {
-//     const users = getAllUsers();
-//     res.status(200).json(users);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao obter usuários" });
-//   }
-// });
-// app.get("/products", (req: Request, res: Response) => {
-//   try {
-//     const name = req.query.name as string;
-//     if (name && name.length > 0) {
-//       const filteredProducts = searchProductsByName(name);
-//       res.status(200).json(filteredProducts);
-//     } else {
-//       const products = getAllProducts();
-//       res.status(200).json(products);
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao obter produtos" });
-//   }
-// });
-// app.post("/users", (req: Request, res: Response) => {
-//   try {
-//     const { id, name, email, password } = req.body;
-//     if (!id || !name || !email || !password) {
-//       res.status(400).json({ error: "Dados inválidos para criar usuário" });
-//       return;
-//     }
-//     const existingUser = getAllUsers().find((user) => user.id === id || user.email === email);
-//     if (existingUser) {
-//       res.status(400).json({ error: "Já existe um usuário com a mesma ID ou e-mail" });
-//       return;
-//     }
-//     const message = createUser(id, name, email, password);
-//     res.status(201).send(message);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao criar usuário" });
-//   }
-// });
-// app.post("/products", (req: Request, res: Response) => {
-//   try {
-//     const { id, name, price, description, imageUrl } = req.body;
-//     if (!id || !name || !price || !description || !imageUrl) {
-//       res.status(400).json({ error: "Dados inválidos para criar produto" });
-//       return;
-//     }
-//     const existingProduct = getAllProducts().find((product) => product.id === id);
-//     if (existingProduct) {
-//       res.status(400).json({ error: "Já existe um produto com a mesma ID" });
-//       return;
-//     }
-//     const message = createProduct(id, name, price, description, imageUrl);
-//     res.status(201).send(message);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao criar produto" });
-//   }
-// });
-// app.delete("/users/:id", (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const existingUser = getAllUsers().find((user) => user.id === id);
-//     if (!existingUser) {
-//       res.status(404).json({ error: "Usuário não encontrado" });
-//       return;
-//     }
-//     const message = deleteUser(id);
-//     res.status(200).send(message);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao deletar usuário" });
-//   }
-// });
-// app.delete("/products/:id", (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const existingProduct = getAllProducts().find((product) => product.id === id);
-//     if (!existingProduct) {
-//       res.status(404).json({ error: "Produto não encontrado" });
-//       return;
-//     }
-//     const message = deleteProduct(id);
-//     res.status(200).send(message);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao deletar produto" });
-//   }
-// });
-// app.put("/products/:id", (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const { name, price, description, imageUrl } = req.body;
-//     const existingProduct = getAllProducts().find((product) => product.id === id);
-//     if (!existingProduct) {
-//       res.status(404).json({ error: "Produto não encontrado" });
-//       return;
-//     }
-//     if (name && typeof name !== "string") {
-//       res.status(400).json({ error: "Nome inválido" });
-//       return;
-//     }
-//     if (price && typeof price !== "number") {
-//       res.status(400).json({ error: "Preço inválido" });
-//       return;
-//     }
-//     if (description && typeof description !== "string") {
-//       res.status(400).json({ error: "Descrição inválida" });
-//       return;
-//     }
-//     if (imageUrl && typeof imageUrl !== "string") {
-//       res.status(400).json({ error: "URL da imagem inválida" });
-//       return;
-//     }
-//     const message = editProduct(id, name, price, description, imageUrl);
-//     res.status(200).send(message);
-//   } catch (error) {
-//     res.status(500).json({ error: "Erro ao editar produto" });
-//   }
-// });
-// app.listen(port, () => {
-//   console.log(`Servidor está rodando em http://localhost:${port}`);
-// });
-// Create User
 const express_1 = __importDefault(require("express"));
+const knex_1 = __importDefault(require("knex"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-// Rota de teste
-app.get("/ping", (req, res) => {
-    res.send("Pong!");
+// Configuração do banco de dados usando o Knex
+const database = (0, knex_1.default)({
+    client: "sqlite3",
+    connection: {
+        filename: "./database.db",
+    },
+    useNullAsDefault: true,
 });
-// Rotas para manipulação dos dados do arquivo database.ts
-const users = [];
-const products = [];
-// Get All Users
-app.get("/users", (req, res) => {
+// Endpoint GET /users
+app.get("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const users = yield database("users").select("*");
         res.status(200).json(users);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao obter os usuários" });
+        res.status(500).json({ message: "Error retrieving users" });
     }
-});
-// Get All Products
-app.get("/products", (req, res) => {
+}));
+// Endpoint GET /products
+app.get("/products", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { name } = req.query;
+        let query = database("products").select("*");
+        if (name) {
+            query = query.where("name", "like", `%${name}%`);
+        }
+        const products = yield query;
         res.status(200).json(products);
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao obter os produtos" });
+        res.status(500).json({ message: "Error retrieving products" });
     }
-});
-// Get All Products (com filtro de nome)
-app.get("/product", (req, res) => {
-    try {
-        const name = req.query.name;
-        if (name) {
-            const filteredProducts = products.filter((product) => product.name.toLowerCase().includes(name.toLowerCase()));
-            res.status(200).json(filteredProducts);
-        }
-        else {
-            res.status(200).json(products);
-        }
-    }
-    catch (error) {
-        res.status(500).json({ error: "Erro ao obter os produtos" });
-    }
-});
-// Create User
-app.post("/users", (req, res) => {
+}));
+// Endpoint POST /users
+app.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, name, email, password } = req.body;
-        const createdAt = new Date().toISOString();
-        const newUser = { id, name, email, password, createdAt };
-        users.push(newUser);
-        res.status(201).json("Cadastro realizado com sucesso");
+        yield database("users").insert({ id, name, email, password });
+        res.status(201).json({ message: "Cadastro realizado com sucesso" });
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao criar o usuário" });
+        res.status(500).json({ message: "Error creating user" });
     }
-});
-// Create Product
-app.post("/products", (req, res) => {
+}));
+// Endpoint POST /products
+app.post("/products", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, name, price, description, imageUrl } = req.body;
-        const newProduct = { id, name, price, description, imageUrl };
-        products.push(newProduct);
-        res.status(201).json("Produto cadastrado com sucesso");
+        yield database("products").insert({
+            id,
+            name,
+            price,
+            description,
+            imageUrl,
+        });
+        res.status(201).json({ message: "Produto cadastrado com sucesso" });
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao criar o produto" });
+        res.status(500).json({ message: "Error creating product" });
     }
-});
-// Delete User by id
-app.delete("/users/:id", (req, res) => {
+}));
+// Endpoint POST /purchases
+app.post("/purchases", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.params.id;
-        const index = users.findIndex((user) => user.id === id);
-        if (index !== -1) {
-            users.splice(index, 1);
-            res.status(200).json("Usuário apagado com sucesso");
-        }
-        else {
-            res.status(404).json("Usuário não encontrado");
-        }
+        const { id, buyer, products } = req.body;
+        yield database.transaction((trx) => __awaiter(void 0, void 0, void 0, function* () {
+            yield trx("purchases").insert({ id, buyer });
+            yield Promise.all(products.map((product) => __awaiter(void 0, void 0, void 0, function* () {
+                const { id: productId, quantity } = product;
+                yield trx("purchases_products").insert({
+                    purchase_id: id,
+                    product_id: productId,
+                    quantity,
+                });
+            })));
+        }));
+        res.status(201).json({ message: "Pedido realizado com sucesso" });
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao deletar o usuário" });
+        res.status(500).json({ message: "Error creating purchase" });
     }
-});
-// Delete Product by id
-app.delete("/products/:id", (req, res) => {
+}));
+// Endpoint GET /purchases/:id
+app.get("/purchases/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.params.id;
-        const index = products.findIndex((product) => product.id === id);
-        if (index !== -1) {
-            products.splice(index, 1);
-            res.status(200).json("Produto apagado com sucesso");
-        }
-        else {
-            res.status(404).json("Produto não encontrado");
-        }
-    }
-    catch (error) {
-        res.status(500).json({ error: "Erro ao deletar o produto" });
-    }
-});
-// Edit Product by id
-app.put("/products/:id", (req, res) => {
-    try {
-        const id = req.params.id;
-        const { name, price, description, imageUrl } = req.body;
-        const index = products.findIndex((product) => product.id === id);
-        if (index !== -1) {
-            products[index] = {
-                id,
-                name: name || products[index].name,
-                price: price || products[index].price,
-                description: description || products[index].description,
-                imageUrl: imageUrl || products[index].imageUrl,
+        const { id } = req.params;
+        const purchase = yield database("purchases")
+            .select("purchases.id as purchaseId", "users.id as buyerId", "users.name as buyerName", "users.email as buyerEmail", "purchases.total_price as totalPrice", "purchases.created_at as createdAt")
+            .join("users", "purchases.buyer", "users.id")
+            .where("purchases.id", id)
+            .first();
+        if (purchase) {
+            const products = yield database("products")
+                .select("products.id", "products.name", "products.price", "products.description", "products.imageUrl", "purchases_products.quantity")
+                .join("purchases_products", "products.id", "purchases_products.product_id")
+                .where("purchases_products.purchase_id", id);
+            const formattedPurchase = {
+                purchaseId: purchase.purchaseId,
+                buyerId: purchase.buyerId,
+                buyerName: purchase.buyerName,
+                buyerEmail: purchase.buyerEmail,
+                totalPrice: purchase.totalPrice,
+                createdAt: purchase.createdAt,
+                products: products.map((product) => ({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    description: product.description,
+                    imageUrl: product.imageUrl,
+                    quantity: product.quantity,
+                })),
             };
-            res.status(200).json("Produto atualizado com sucesso");
+            res.status(200).json(formattedPurchase);
         }
         else {
-            res.status(404).json("Produto não encontrado");
+            res.status(404).json({ message: "Purchase not found" });
         }
     }
     catch (error) {
-        res.status(500).json({ error: "Erro ao atualizar o produto" });
+        res.status(500).json({ message: "Error retrieving purchase" });
     }
-});
-// Iniciar o servidor
-const port = 3000;
-app.listen(port, () => {
-    console.log(`Servidor iniciado na porta ${port}`);
+}));
+app.listen(3000, () => {
+    console.log("Server started on port 3000");
 });
